@@ -12,7 +12,7 @@ The 'Cog ability final' folder contains the cog_ability_cobe_game_data file whic
 
 # MATLAB scripts
 
-Ww have used matlab to code the search moves. use 'create_searchstrategies.m' to compute hamming distance and feedback variables, as well as model based and interdependence vars. for convenience write the new data using 'write_game_file.m'. Note that for cog sci data i have simply appended the original file. 
+We have used matlab to code the search moves. use 'create_searchstrategies.m' to compute hamming distance and feedback variables, as well as model based and interdependence vars. for convenience write the new data using 'write_game_file.m'. Note that for cog sci data we have simply appended the original file. 
 
 # R scripts
 Once all steps above are completed, you should be able to read the data into r using 'data_load.r'. All scripts pertaining to the environment are called in 'setup_and_data_load.Rmd'. Analyses can be run using 'Cleaned_up_analysis.Rmd'. 
