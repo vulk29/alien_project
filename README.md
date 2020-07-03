@@ -4,7 +4,7 @@
 # Raw data
 
 The 'Lab_final' folder contains the raw dataset for the game plays (AG_plays_cobe) as well as the survey data. 
-Due to the fact that some of the lab participants failed to provide the correct game id, which would allow us to match survey and game play data, part the matching was done by a RA  using timestamps. In addition, more so in the lab then on Mturk, quite a few participants chose to play the game repeatedly. We have only analyzed the first session for each participant. cobegame.csv is the cleaned up and merge dataset that will be used subequently. 
+Due to the fact that some of the lab participants failed to provide the correct game id, which would allow us to match survey and game play data, part the matching was done by a RA  using timestamps. In addition, more so in the lab then on Mturk, quite a few participants chose to play the game repeatedly. We have only analyzed the first session for each participant. cobegame.csv is the cleaned up and merge dataset (use R scripts/read_cobe_games.R, if you want to generate it from the raw data) that will be used subequently. 
 
 The 'Mturk final' folder contains the survey data and the gameplays corresponding to the mturk id
 
