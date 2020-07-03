@@ -1,0 +1,42 @@
+---
+title: "Setup and data load"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+###read the three datasets. Cobe - lab study, Mturk - Mturk study, Cog - cognitive ability study. 
+#The cognitive ability study is in long format with the survey/cognitive ability scores merged with the game data. The others are loaded separately
+suppressWarnings({source("setup_proj.R")})
+```
+```{r}
+source("data_load.R")
+```
+
+```{r}
+### clean up mturk data and merge survey data with game data. 
+suppressWarnings({ source("cleaning_up.R") })
+
+```
+
+
+```{r}
+### Factor analysis for the three datasets
+
+suppressWarnings({ source("factor_analysis.R") })
+
+
+
+```
+```{r}
+
+#clean up
+
+
+rm(CobeKAI, MturkKAI,CogKAI,KAI.fit, creativity_f_Cobe, creativity_f_mturk, detail_f_Cobe, detail_f_mturk, KAI.model, cobekgamez)
+rm(cobedata, cobegame,mturkgamez,mturkgame, mturkdata, EFAresult1, EFAresult2, EFAresult3, cogdata, CogID)
+```
+
