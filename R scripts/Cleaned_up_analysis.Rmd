@@ -1,0 +1,503 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Below you find the analyses for the 3 datasets. They are split into two: first the local DV and then the model_based models. Finally, the last sections contain the BRMS models
+
+```{r}
+data<-mturk%>%
+  filter(submissionOrder>2)
+source("setup_data.R")
+
+m0 <- glm(local_search ~ pozitive, 
+          data = data, family = binomial())
+
+m1 <- glm(local_search ~ pozitive+submissionOrder, 
+          data = data, family = binomial())
+
+m2 <- glm(local_search ~ Factor1+pozitive+submissionOrder, 
+          data = data, family = binomial())
+m3 <- glm(local_search ~ Factor2+pozitive+submissionOrder, 
+            data = data, family = binomial())
+
+stargazer(m0 ,m1, m2, m3, type='text')
+ 
+###################### the marginal models take a bit of time to run and cannot be automaticaly added to the stargazer table. Pasted below, for convenience
+#  data<-na.omit(data)
+#  m5<- geeglm(local_search~ pozitive+submissionOrder+Factor1, data = data,family=binomial(), id = Id, corstr = "unstructured")
+#  summary (m5)
+#  
+
+# Call:
+# geeglm(formula = local_search ~ pozitive + submissionOrder + 
+#     Factor1, family = binomial(), data = data, id = Id, 
+#     corstr = "unstructured")
+# 
+#  Coefficients:
+#                 Estimate Std.err   Wald Pr(>|W|)    
+# (Intercept)       0.0887  0.1099   0.65    0.419    
+# pozitive1         1.1125  0.1068 108.54   <2e-16 ***
+# submissionOrder  -0.0520  0.0067  60.11    9e-15 ***
+# Factor1          -0.1127  0.0587   3.69    0.055 . 
+
+# m5<- geeglm(local_search~ pozitive+submissionOrder+Factor2, data = data,family=binomial(), id = Id, corstr = "unstructured")
+# summary (m5)
+# 
+# 
+# Call:
+# geeglm(formula = local_search ~ pozitive + submissionOrder + 
+#     Factor2, family = binomial(), data = data, id = Id, 
+#     corstr = "unstructured")
+# 
+#  Coefficients:
+#                 Estimate Std.err   Wald Pr(>|W|)    
+# (Intercept)       0.0898  0.1098   0.67     0.41    
+# pozitive1         1.1058  0.1066 107.61  < 2e-16 ***
+# submissionOrder  -0.0520  0.0067  60.08  9.1e-15 ***
+# Factor2          -0.0360  0.0630   0.33     0.57     
+
+
+
+#########################
+```
+
+```{r}
+data<-mturk%>%
+  filter(submissionOrder>2)
+source("setup_data.R")
+
+m0<-glm(relevel(factor(MB), ref='0') ~ submissionOrder, data = data, family = binomial())
+m1<-glm(relevel(factor(MB), ref='0') ~ submissionOrder+pozitive, data = data, family = binomial())
+m2<-glm(relevel(factor(MB), ref='0') ~ submissionOrder+pozitive+succ_f, data = data, family = binomial())
+m3<-glm(relevel(factor(MB), ref='0') ~ submissionOrder+pozitive+succ_f+Factor2, data = data, family = binomial())
+m4<-glm(relevel(factor(MB), ref='0') ~ submissionOrder+pozitive+succ_f+Factor1, data = data, family = binomial())
+
+stargazer(m0 ,m1, m2, m3, m4, type='text')
+
+```
+```{r}
+data<-cobe%>%
+  filter(submissionOrder>2)
+
+source("setup_data.R")
+
+
+m0 <- glm(local_search ~ pozitive+submissionOrder, 
+          data = data, family = binomial())
+
+m2 <- glm(local_search ~ Factor1+pozitive+submissionOrder, 
+          data = data, family = binomial())
+m3 <- glm(local_search ~ Factor2+pozitive+submissionOrder, 
+            data = data, family = binomial())
+
+stargazer(m0, m2, m3,type='text')
+
+###################### the marginal models take a bit of time to run and cannot be automaticaly added to the stargazer table. Pasted below, for convenience
+
+ # m5<- geeglm(local_search~ pozitive+submissionOrder+Factor2, data = data,family=binomial(), id = Id, corstr = "unstructured")
+ # summary (m5)
+
+# 
+# Call:
+# geeglm(formula = local_search ~ pozitive + submissionOrder + 
+#     Factor1, family = binomial(), data = data, id = Id, 
+#     corstr = "unstructured")
+# 
+#  Coefficients:
+#                 Estimate  Std.err  Wald Pr(>|W|)    
+# (Intercept)     -0.28773  0.14565  3.90  0.04821 *  
+# pozitive1        0.85383  0.09778 76.26  < 2e-16 ***
+# submissionOrder -0.03122  0.00896 12.14  0.00049 ***
+# Factor1         -0.21414  0.08629  6.16  0.01308 *  
+  
+#   
+#  Call:
+# geeglm(formula = local_search ~ pozitive + submissionOrder + 
+#     Factor2, family = binomial(), data = data, id = Id, 
+#     corstr = "unstructured")
+# 
+#  Coefficients:
+#                 Estimate  Std.err  Wald Pr(>|W|)    
+# (Intercept)     -0.29695  0.12146  5.98    0.014 *  
+# pozitive1        0.87959  0.09714 81.99  < 2e-16 ***
+# submissionOrder -0.03515  0.00853 16.99  3.8e-05 ***
+# Factor2          0.22246  0.04576 23.64  1.2e-06 ***
+# ---
+# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+# 
+# Correlation structure = unstructured 
+# Estimated Scale Parameters:
+# 
+#   Link = identity 
+# 
+# Estimated Correlation Parameters:
+# Number of clusters:   92  Maximum cluster size: 60 
+
+
+# data<-na.omit(data)
+#  data$local_search <- ifelse(data$hamming_best > 1, 0, 1)
+#   m5<-geeglm(formula = local_search ~ pozitive + submissionOrder + Factor1*pozitive+
+#       Factor1, family = binomial(), data = data, id = Id, corstr = "unstructured")
+#   Call:
+# geeglm(formula = local_search ~ pozitive + submissionOrder + 
+#     Factor1 * pozitive + Factor1, family = binomial(), data = data, 
+#     id = Id, corstr = "unstructured")
+# 
+#  Coefficients:
+#                   Estimate  Std.err  Wald Pr(>|W|)    
+# (Intercept)       -0.27988  0.17063  2.69  0.10094    
+# pozitive1          0.83961  0.13574 38.26  6.2e-10 ***
+# submissionOrder   -0.03364  0.00961 12.24  0.00047 ***
+# Factor1           -0.18705  0.12699  2.17  0.14077    
+# pozitive1:Factor1  0.43276  0.13753  9.90  0.00165 ** 
+
+#########################
+```
+```{r}
+data<-cobe%>%
+  filter(submissionOrder>2)
+source("setup_data.R")
+
+m0<-glm(relevel(factor(MB), ref='0') ~ submissionOrder, data = data, family = binomial())
+m1<-glm(relevel(factor(MB), ref='0') ~ submissionOrder+pozitive, data = data, family = binomial())
+m2<-glm(relevel(factor(MB), ref='0') ~ submissionOrder+pozitive+succ_f, data = data, family = binomial())
+m3<-glm(relevel(factor(MB), ref='0') ~ submissionOrder+pozitive+succ_f+Factor2, data = data, family = binomial())
+m4<-glm(relevel(factor(MB), ref='0') ~ submissionOrder+pozitive+succ_f+Factor1, data = data, family = binomial())
+stargazer(m0 ,m1, m2, m3, m4, type='text')
+
+# keep in mind that it is NOT the case that succ_f doesnt predict MB (at least to some degree). please see the cog comment for the same analysis
+# m0<-glm(relevel(factor(MB), ref='0') ~ succ_f, data = data, family = binomial())
+# summary(m0)
+# Call:
+# glm(formula = relevel(factor(MB), ref = "0") ~ succ_f, family = binomial(), 
+#     data = data)
+# 
+# Deviance Residuals: 
+#     Min       1Q   Median       3Q      Max  
+# -0.6981  -0.5007  -0.4743  -0.4575   2.1490  
+# 
+# Coefficients:
+#             Estimate Std. Error z value Pr(>|z|)    
+# (Intercept) -2.20455    0.09290 -23.731  < 2e-16 ***
+# succ_f       0.03821    0.01320   2.895  0.00379 ** 
+# ---
+# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+# 
+# (Dispersion parameter for binomial family taken to be 1)
+# 
+#     Null deviance: 1523.7  on 2126  degrees of freedom
+# Residual deviance: 1515.8  on 2125  degrees of freedom
+# AIC: 1519.8
+# 
+# Number of Fisher Scoring iterations: 4
+
+
+```
+
+
+
+
+```{r}
+data<-cog%>%
+  filter(submissionOrder>2)
+source("setup_data.R")
+#########################
+data<-data%>%
+  filter(Sustained_attention>-3.7) 
+#p values and estimates change slightly (but qualitatively the same) without the outlier. We are reporting the results from the full dataset because these are conducted on standardized values anyway.
+
+m1 <- glm(relevel(local_search, ref='0') ~ Processing_speed+pozitive+(submissionOrder),
+            data = data, family = binomial())
+m2 <- glm(relevel(local_search, ref='0') ~ Sustained_attention+pozitive+submissionOrder, 
+            data = data, family = binomial())
+m3 <- glm(relevel(local_search, ref='0') ~ Working_memory+(submissionOrder)+pozitive, 
+            data = data, family = binomial())
+
+m4 <- glm(relevel(local_search, ref='0')~ Learning_and_memory+(submissionOrder)+pozitive, 
+            data = data, family = binomial())
+m5 <- glm(relevel(local_search, ref='0') ~ Longterm_memory+(submissionOrder)+pozitive, 
+            data = data, family = binomial())
+m6 <- glm(relevel(local_search, ref='0') ~ Executive_functions+(submissionOrder)+pozitive,
+            data = data, family = binomial())
+m62 <- glmer(relevel(local_search, ref='0') ~ Executive_functions+(1|Id)+submissionOrder+pozitive,
+              data = data, family = binomial())
+m7 <- glm(relevel(local_search, ref='0') ~ Global_cognition_score+(submissionOrder)+pozitive,
+            data = data, family = binomial())
+stargazer(m1,m2, m3, m4, m5, m6, m62, m7 , type='text')
+
+
+###################### the marginal models take a bit of time to run and cannot be automaticaly added to the stargazer table. Pasted below, for convenience
+
+# data$timeSinceLevelLoad=1
+# data<-na.omit(data)
+#   
+#   data$local_search <- ifelse(data$hamming_best > 1, 0, 1)
+#    m5<-geeglm(formula = local_search ~ pozitive + submissionOrder + Executive_functions
+#        , family = binomial(), data = data, id = Id, corstr = "unstructured")
+   
+# note that the above gee call produces unreasonable estimates. We therefore choose an alternative corelation  structure and refitted the model. the estimates and p values thereof are similar to those produced by a mixed model where we model individuals as random effects or the equivalent bayesian mixed model
+# 
+# m5<-geeglm(formula = local_search ~ pozitive + submissionOrder + Executive_functions
+#  , family = binomial(), data = data, id = Id, corstr = "exchangeable")
+      
+#       Call:
+# geeglm(formula = local_search ~ pozitive + submissionOrder + 
+#     Executive_functions, family = binomial(), data = data, id = Id, 
+#     corstr = "exchangeable")
+# 
+#  Coefficients:
+#                     Estimate Std.err Wald Pr(>|W|)  
+# (Intercept)          -0.1479  0.3210 0.21    0.645  
+# pozitive1             0.3678  0.2458 2.24    0.135  
+# submissionOrder      -0.0354  0.0207 2.92    0.088 .
+# Executive_functions   0.3680  0.1861 3.91    0.048 *
+   
+   
+```
+
+
+
+
+```{r}
+data<-cog%>%
+  filter(submissionOrder>2)
+
+source("setup_data.R")
+#########################
+data<-data%>%
+  filter(Sustained_attention>-3.7)
+
+
+m0<-glm(relevel(factor(MB), ref='0') ~ submissionOrder, data = data, family = binomial())
+summary(m0)
+m1<-glm(relevel(factor(MB), ref='0') ~ submissionOrder+pozitive, data = data, family = binomial())
+summary(m1)
+m2<-glm(relevel(factor(MB), ref='0') ~ submissionOrder+pozitive++succ_f, data = data, family = binomial())
+summary(m2)
+m4<-glm(relevel(factor(MB), ref='0') ~ submissionOrder+pozitive++succ_f+Learning_and_memory, data = data, family = binomial())
+summary(m4)
+m5<-glmer(relevel(factor(MB), ref='0') ~ submissionOrder+pozitive++succ_f+Learning_and_memory+(1|Id), data = data, family = binomial())
+summary(m5)
+stargazer(m0 ,m1, m2, m4, m5, type='text')
+
+#Note that while succ_f ends up NOT being a good predictor in the hierarchial reg above, on its own, it is. OFC succ_f is also correlated with subOrder, but important to know these results are not super solid
+
+# Call:
+# glm(formula = relevel(factor(MB), ref = "0") ~ succ_f, family = binomial(), 
+#     data = data)
+# 
+# Deviance Residuals: 
+#     Min       1Q   Median       3Q      Max  
+# -0.6981  -0.5007  -0.4743  -0.4575   2.1490  
+# 
+# Coefficients:
+#             Estimate Std. Error z value Pr(>|z|)    
+# (Intercept) -2.20455    0.09290 -23.731  < 2e-16 ***
+# succ_f       0.03821    0.01320   2.895  0.00379 ** 
+
+
+
+```
+```{r}
+data<-cog%>%
+  filter(submissionOrder>2)
+
+source("setup_data.R")
+#########################
+
+
+m1 <- glm(relevel(factor(MB), ref='0') ~ Processing_speed+pozitive+submissionOrder,
+            data = data, family = binomial())
+
+m2 <- glm(relevel(factor(MB), ref='0') ~ Sustained_attention+pozitive+submissionOrder, 
+            data = data, family = binomial())
+
+m3 <- glm(relevel(factor(MB), ref='0') ~ Working_memory+submissionOrder+pozitive, 
+            data = data, family = binomial())
+
+m4 <- glm(relevel(factor(MB), ref='0')~ Learning_and_memory+submissionOrder+pozitive, 
+            data = data, family = binomial())
+m5 <- glm(relevel(factor(MB), ref='0') ~ Longterm_memory+submissionOrder+pozitive, 
+            data = data, family = binomial())
+m6 <- glm(relevel(factor(MB), ref='0') ~ Executive_functions+submissionOrder+pozitive,
+            data = data, family = binomial())
+m7 <- glm(relevel(factor(MB), ref='0') ~ Global_cognition_score+submissionOrder+pozitive,
+            data = data, family = binomial())
+
+stargazer(m1,m2, m3, m4, m5, m6, m7, type='text')
+
+
+data$timeSinceLevelLoad=1
+data<-na.omit(data)
+m8<-geeglm(formula = MB ~ pozitive + submissionOrder + Learning_and_memory
+      , family = binomial(), data = data, id = Id, corstr = "exchangeable")
+
+#similarly to the model for exec functions, the unstruct model produces unreasonable est. 
+
+# geeglm(formula = MB ~ pozitive + submissionOrder + Learning_and_memory, 
+#     family = binomial(), data = all_model, id = Id, corstr = "exchangeable")
+# 
+#  Coefficients:
+#                     Estimate Std.err  Wald Pr(>|W|)    
+# (Intercept)          -1.9234  0.3172 36.77  1.3e-09 ***
+# pozitive1            -0.2810  0.3480  0.65     0.42    
+# submissionOrder       0.0053  0.0187  0.08     0.78    
+# Learning_and_memory   0.3255  0.1500  4.71     0.03 *  
+
+```
+```{r}
+
+data<-cog%>%
+  filter(submissionOrder>2)
+
+source("setup_data.R")
+#########################
+data<-data%>%
+  filter(Sustained_attention>-3.7)
+
+  s1 <- brm(data = data,
+               family = binomial(link=logit),
+               formula = as.integer(local_search) ~ 1+Executive_functions+(1|Id)+(submissionOrder),
+                prior = c(prior(normal(0, 10), class = Intercept),
+                         prior(normal(0, 5), class = b),
+                         prior(cauchy(0, 1), class = sd)),
+               iter = 2200, warmup = 1000, chains = 1, cores = 4,
+               control = list(adapt_delta = .975, max_treedepth = 20),
+               seed = 190831)
+  beep(sound=4)
+  summary(s1, priors = FALSE, prob = 0.87, mc_se = FALSE)
+```
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+```{r}
+data<-cobe%>%
+  filter(submissionOrder>2)
+
+source("setup_data.R")
+#########################
+
+read1 <- brm(data = data,
+             family = binomial,
+             formula = as.integer(local_search) ~ 1+Factor1+submissionOrder+(1|Id)+pozitive,
+              prior = c(prior(normal(0, 10), class = Intercept),
+                       prior(normal(0, 10), class = b),
+                       prior(cauchy(0, 10), class = sd)),
+             iter = 2200, warmup = 1000, chains = 1, cores = 4,
+             control = list(adapt_delta = .975, max_treedepth = 20),
+             seed = 190831)
+beep(sound=4)
+summary(read1, priors = FALSE, prob = 0.93, mc_se = FALSE)
+
+
+#  Family: binomial 
+#   Links: mu = logit 
+# Formula: as.integer(local_search) ~ 1 + Factor1 + submissionOrder + (1 | Id) + pozitive 
+#    Data: data (Number of observations: 2127) 
+# Samples: 1 chains, each with iter = 2200; warmup = 1000; thin = 1;
+#          total post-warmup samples = 1200
+# 
+# Group-Level Effects: 
+# ~Id (Number of levels: 94) 
+#               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+# sd(Intercept)     0.31      0.05     0.20     0.41 1.00      364      664
+# 
+# Population-Level Effects: 
+#                 Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+# Intercept           0.91      0.09     0.72     1.09 1.00     1509     1029
+# Factor1            -0.11      0.05    -0.20    -0.01 1.00      927      861
+# submissionOrder    -0.01      0.01    -0.02    -0.00 1.00     1601      904
+# pozitive1           0.73      0.12     0.50     0.95 1.00     1403      820
+
+
+```
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+```{r}
+data<-cobe%>%
+  filter(submissionOrder>2)
+
+source("setup_data.R")
+#########################
+
+read1 <- brm(data = data,
+             family = binomial,
+             formula = as.integer(local_search) ~ 1+Factor2+submissionOrder+(1|Id)+pozitive,
+              prior = c(prior(normal(0, 10), class = Intercept),
+                       prior(normal(0, 10), class = b),
+                       prior(cauchy(0, 10), class = sd)),
+             iter = 2200, warmup = 1000, chains = 1, cores = 4,
+             control = list(adapt_delta = .975, max_treedepth = 20),
+             seed = 190831)
+beep(sound=4)
+summary(read1, priors = FALSE, prob = 0.93, mc_se = FALSE)
+
+#  Family: binomial 
+#   Links: mu = logit 
+# Formula: as.integer(local_search) ~ 1 + Factor2 + submissionOrder + (1 | Id) + pozitive 
+#    Data: data (Number of observations: 2127) 
+# Samples: 1 chains, each with iter = 2200; warmup = 1000; thin = 1;
+#          total post-warmup samples = 1200
+# 
+# Group-Level Effects: 
+# ~Id (Number of levels: 94) 
+#               Estimate Est.Error l-90% CI u-90% CI  Rhat Bulk_ESS Tail_ESS
+# sd(Intercept)    0.306     0.053    0.220    0.393 1.000      435      857
+# 
+# Population-Level Effects: 
+#                 Estimate Est.Error l-90% CI u-90% CI  Rhat Bulk_ESS Tail_ESS
+# Intercept          0.910     0.092    0.759    1.058 1.000     1622      996
+# Factor2            0.090     0.051    0.003    0.171 1.000     1213      768
+# submissionOrder   -0.015     0.005   -0.023   -0.006 1.001     2017     1062
+# pozitive1          0.722     0.110    0.543    0.901 1.003     2244      667
+# 
+# Samples were drawn using sampling(NUTS). For each parameter, Bulk_ESS
+# and Tail_ESS are effective sample size measures, and Rhat is the potential
+# scale reduction factor on split chains (at convergence, Rhat = 1).
+```
+```{r}
+data<-mturk%>%
+  filter(submissionOrder>2)
+
+source("setup_data.R")
+#########################
+
+read1 <- brm(data = data,
+             family = binomial,
+             formula = as.integer(local_search) ~ 1+Factor1+submissionOrder+(1|Id)+pozitive,
+              prior = c(prior(normal(0, 10), class = Intercept),
+                       prior(normal(0, 10), class = b),
+                       prior(cauchy(0, 10), class = sd)),
+             iter = 2200, warmup = 1000, chains = 1, cores = 4,
+             control = list(adapt_delta = .975, max_treedepth = 20),
+             seed = 190831)
+beep(sound=4)
+summary(read1, priors = FALSE, prob = 0.90, mc_se = FALSE)
+
+# print(summary(read1, priors = FALSE, prob = 0.81, mc_se = FALSE), digits=3)
+#  Family: binomial 
+#   Links: mu = logit 
+# Formula: as.integer(local_search) ~ 1 + Factor1 + submissionOrder + (1 | Id) + pozitive 
+#    Data: data (Number of observations: 4277) 
+# Samples: 1 chains, each with iter = 2200; warmup = 1000; thin = 1;
+#          total post-warmup samples = 1200
+# 
+# Group-Level Effects: 
+# ~Id (Number of levels: 201) 
+#               Estimate Est.Error l-81% CI u-81% CI  Rhat Bulk_ESS Tail_ESS
+# sd(Intercept)    0.361     0.038    0.315    0.412 1.002      465      544
+# 
+# Population-Level Effects: 
+#                 Estimate Est.Error l-81% CI u-81% CI  Rhat Bulk_ESS Tail_ESS
+# Intercept          1.182     0.067    1.088    1.271 1.000     1771      999
+# Factor1           -0.050     0.036   -0.096   -0.001 1.002      955      902
+# submissionOrder   -0.028     0.004   -0.033   -0.023 0.999     2771      953
+# pozitive1          0.931     0.104    0.798    1.065 0.999     3102      952
+# 
+# Samples were drawn using sampling(NUTS). For each parameter, Bulk_ESS
+# and Tail_ESS are effective sample size measures, and Rhat is the potential
+# scale reduction factor on split chains (at convergence, Rhat = 1).
+
+```
+
+
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
