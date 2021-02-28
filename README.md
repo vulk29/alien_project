@@ -1,7 +1,7 @@
 # alien_project
 #There are three distinct experiments and each involves 2-3 datasets. Some of these have been already merged in the cleanup process. 
 
-The game can be downloaded from the AGPc folder. Please keep the current structure of the folder to insure the game runs without errors.
+The game can be downloaded from https://github.com/vulk29/Alien_Game 
 
 # Raw data
 
